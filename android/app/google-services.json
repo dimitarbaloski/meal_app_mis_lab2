@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "592441110274",
+    "project_id": "mealappmislab2",
+    "storage_bucket": "mealappmislab2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:592441110274:android:520a1dee9f2ad90fcddc1b",
+        "android_client_info": {
+          "package_name": "com.example.meal_application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWDsoAfPcpj2xO75fi5wglMwKffl75mPs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

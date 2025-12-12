@@ -2,10 +2,25 @@ import 'package:flutter/material.dart';
 import 'screens/categories_screen.dart';
 import 'screens/meal_detail_screen.dart';
 import 'services/api_service.dart';
+import 'services/notification_service.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:timezone/data/latest_all.dart' as tzdata; // for initialization
+import 'package:timezone/timezone.dart' as tz;             // for TZDateTime
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  // Initialize timezone data
+  tzdata.initializeTimeZones();
+
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -24,8 +39,40 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final NotificationService notificationService = NotificationService();
+
+  @override
+  void initState() {
+    super.initState();
+    initNotifications();
+  }
+
+  Future<void> initNotifications() async {
+  await notificationService.init();
+
+  try {
+    // Get a random meal from your ApiService
+    final randomMeal = await ApiService().getRandomMeal();
+
+    // Show notification immediately
+    await notificationService.showRandomRecipeNotification(randomMeal.name);
+
+    print('Notification sent for recipe: ${randomMeal.name}');
+  } catch (e) {
+    print('Failed to show notification: $e');
+  }
+}
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +85,7 @@ class HomeScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: SizedBox(
-              width: 200, 
+              width: 200,
               height: 60,
               child: ElevatedButton.icon(
                 label: const Text(
@@ -58,7 +105,8 @@ class HomeScreen extends StatelessWidget {
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                          content: Text('Failed to load random meal')),
+                        content: Text('Failed to load random meal'),
+                      ),
                     );
                   }
                 },
@@ -72,7 +120,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
+           Expanded(
             child: CategoriesScreen(),
           ),
         ],
